@@ -261,22 +261,27 @@ impl AppleMusicDownloader {
 
 #[cfg(test)]
 mod tests {
+    use std::{fs::File, io::BufReader};
+
     use stream_info::StreamInfo;
+    use widevine::{Cdm, Device};
 
     use crate::decrypter;
 
     use super::*;
 
     #[tokio::test]
-    async fn test_apple_music() {
+    async fn test_new() {
         let media_user_token = std::env::var("MEDIA_USER_TOKEN").unwrap();
         let apple_music_downloader =
             AppleMusicDownloader::new_with_media_user_token(&media_user_token)
                 .await
                 .unwrap();
-        let device_private_key = include_bytes!("../device/private_key.pem").to_vec();
-        let device_client_id_blob = include_bytes!("../device/client_id.bin").to_vec();
-        let mut decrypter = decrypter::Decrypter::new(device_private_key, device_client_id_blob);
+        let device = Device::read_wvd(&mut BufReader::new(
+            File::open("./device/device.wvd").unwrap(),
+        ))
+        .unwrap();
+        let cdm = Cdm::new(device);
         let webplayback = apple_music_downloader
             .get_webplayback("1753050648")
             .await
@@ -284,10 +289,15 @@ mod tests {
         let stream_info = StreamInfo::new_with_webplayback(&webplayback)
             .await
             .unwrap();
-        let decrypt_key = decrypter
-            .get_decrypt_key(&stream_info, &apple_music_downloader)
-            .await
-            .unwrap();
-        assert_eq!(decrypt_key.len(), 32);
+        let decryption_key = decrypter::get_decrypt_key(
+            &cdm,
+            &stream_info.pssh,
+            "1753050648",
+            &apple_music_downloader,
+        )
+        .await
+        .unwrap();
+
+        assert_eq!(decryption_key.len(), 32);
     }
 }

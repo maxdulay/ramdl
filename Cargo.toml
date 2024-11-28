@@ -1,6 +1,6 @@
 [package]
 name = "ramdl"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 license = "MIT"
 description = "A Rust library for downloading Apple Music songs/music videos/posts"
@@ -16,6 +16,7 @@ serde = { version = "1.0.215", features = ["serde_derive"] }
 serde_json = "1.0.132"
 thiserror = "2.0.3"
 tokio = { version = "1.41.1", features = ["full"] }
-rust_widevine = { git = "https://github.com/liulifox233/rust_widevine" }
 pssh-box = "0.1.10"
 mp4decrypt = "0.4.2"
+widevine = "0.1.0"
+hex = "0.4.3"
