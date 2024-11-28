@@ -1751,7 +1751,7 @@ dependencies = [
 [[package]]
 name = "rust_widevine"
 version = "0.1.0"
-source = "git+https://github.com/Frooastside/rust_widevine#cfc8fd5456d1d455ceff2b564bba908d95fa31f5"
+source = "git+https://github.com/liulifox233/rust_widevine#0fa22a3126fcd71beac344eacadfdd83fc33bc12"
 dependencies = [
  "base64 0.22.1",
  "crunchyroll-rs",

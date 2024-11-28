@@ -16,6 +16,6 @@ serde = { version = "1.0.215", features = ["serde_derive"] }
 serde_json = "1.0.132"
 thiserror = "2.0.3"
 tokio = { version = "1.41.1", features = ["full"] }
-rust_widevine = { git = "https://github.com/Frooastside/rust_widevine" }
+rust_widevine = { git = "https://github.com/liulifox233/rust_widevine" }
 pssh-box = "0.1.10"
 mp4decrypt = "0.4.2"
