@@ -1,0 +1,25 @@
+name: Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  MEDIA_USER_TOKEN: ${{ secrets.MEDIA_USER_TOKEN }}
+
+jobs:
+  check:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v3
+    - name: Check
+      run: cargo check --verbose
+    - name: Run tests
+      run: cargo test --verbose
