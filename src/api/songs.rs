@@ -105,7 +105,7 @@ pub struct ContentVersion {
 
 #[cfg(test)]
 mod tests {
-    use crate::apple_music::apple_music::AppleMusic;
+    use crate::AppleMusicDownloader;
 
     #[tokio::test]
     async fn test_songs() {
@@ -114,10 +114,10 @@ mod tests {
             .get(2)
             .expect("MEDIA_USER_TOKEN not provided")
             .to_string();
-        let apple_music = AppleMusic::new_with_media_user_token(&media_user_token)
+        let apple_music = AppleMusicDownloader::new_with_media_user_token(&media_user_token)
             .await
             .unwrap();
-        let song = apple_music.get_song("1214782673").await.unwrap();
+        let song = apple_music.get_songs("1214782673").await.unwrap();
         assert_eq!(
             song.attributes.name,
             "サイレンは彼方より (feat. Hatsune Miku)"

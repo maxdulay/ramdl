@@ -8,9 +8,14 @@ repository = "https://github.com/liulifox233/ramdl"
 readme = "README.md"
 
 [dependencies]
+base64 = "0.22.1"
 fancy-regex = "0.14.0"
+m3u8-rs = "6.0.0"
 reqwest = { version = "0.12.9", features = ["json"] }
 serde = { version = "1.0.215", features = ["serde_derive"] }
 serde_json = "1.0.132"
 thiserror = "2.0.3"
 tokio = { version = "1.41.1", features = ["full"] }
+rust_widevine = { git = "https://github.com/Frooastside/rust_widevine" }
+pssh-box = "0.1.10"
+mp4decrypt = "0.4.2"
