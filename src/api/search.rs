@@ -174,11 +174,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_search() {
-        let args: Vec<String> = std::env::args().collect();
-        let media_user_token = args
-            .get(2)
-            .expect("MEDIA_USER_TOKEN not provided")
-            .to_string();
+        let media_user_token = std::env::var("MEDIA_USER_TOKEN").unwrap();
         let apple_music = AppleMusicDownloader::new_with_media_user_token(&media_user_token)
             .await
             .unwrap();
