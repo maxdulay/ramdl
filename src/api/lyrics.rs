@@ -38,6 +38,6 @@ mod tests {
         let apple_music = AppleMusicDownloader::new_with_media_user_token(&media_user_token)
             .await
             .unwrap();
-        let lyrics = apple_music.get_lyrics("1428083880").await.unwrap();
+        apple_music.get_lyrics("1428083880").await.unwrap();
     }
 }
