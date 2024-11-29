@@ -29,22 +29,27 @@ pub const LICENSE_API_URL: &str =
 
 /// The Apple Music downloader struct.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct AppleMusicDownloader {
     media_user_token: String,
     store_front: String,
     language: String,
     headers: reqwest::header::HeaderMap,
     client: reqwest::Client,
+    device: widevine::Device,
 }
 
 impl Default for AppleMusicDownloader {
     fn default() -> Self {
+        let device =
+            widevine::Device::read_wvd(include_bytes!("../device/device.wvd") as &[u8]).unwrap();
         AppleMusicDownloader {
             media_user_token: "".to_string(),
             store_front: "us".to_string(),
             language: "en-US".to_string(),
             headers: reqwest::header::HeaderMap::new(),
             client: reqwest::Client::new(),
+            device,
         }
     }
 }
@@ -311,10 +316,9 @@ impl AppleMusicDownloader {
 
 #[cfg(test)]
 mod tests {
-    use std::{fs::File, io::BufReader};
 
     use stream_info::StreamInfo;
-    use widevine::{Cdm, Device};
+    use widevine::Cdm;
 
     use crate::decrypter;
 
@@ -327,11 +331,7 @@ mod tests {
             AppleMusicDownloader::new_with_media_user_token(&media_user_token)
                 .await
                 .unwrap();
-        let device = Device::read_wvd(&mut BufReader::new(
-            File::open("./device/device.wvd").unwrap(),
-        ))
-        .unwrap();
-        let cdm = Cdm::new(device);
+        let cdm = Cdm::new(apple_music_downloader.device.clone());
         let webplayback = apple_music_downloader
             .get_webplayback("1753050648")
             .await
