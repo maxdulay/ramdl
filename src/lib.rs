@@ -15,6 +15,7 @@ use serde_json::json;
 use lyrics::Lyrics;
 use search;
 use songs::Song;
+use stream_info::StreamInfo;
 
 /// <https://beta.music.apple.com>
 pub const APPLE_MUSIC_HOMEPAGE_URL: &str = "https://beta.music.apple.com";
@@ -312,17 +313,25 @@ impl AppleMusicDownloader {
             .unwrap();
         Ok(response)
     }
+
+    /// Gets the decryptioin key.
+    pub async fn get_decryption_key(
+        &self,
+        stream_info: &StreamInfo,
+        track_id: &str,
+    ) -> Result<String> {
+        let cdm = widevine::Cdm::new(self.device.clone());
+        let decryption_key = decrypter::get_decrypt_key(&cdm, &stream_info.pssh, track_id, self)
+            .await
+            .unwrap();
+        Ok(decryption_key)
+    }
 }
 
 #[cfg(test)]
 mod tests {
-
-    use stream_info::StreamInfo;
-    use widevine::Cdm;
-
-    use crate::decrypter;
-
     use super::*;
+    use stream_info::StreamInfo;
 
     #[tokio::test]
     async fn get_decrypt_key() {
@@ -331,7 +340,6 @@ mod tests {
             AppleMusicDownloader::new_with_media_user_token(&media_user_token)
                 .await
                 .unwrap();
-        let cdm = Cdm::new(apple_music_downloader.device.clone());
         let webplayback = apple_music_downloader
             .get_webplayback("1753050648")
             .await
@@ -339,14 +347,10 @@ mod tests {
         let stream_info = StreamInfo::new_with_webplayback(&webplayback)
             .await
             .unwrap();
-        let decryption_key = decrypter::get_decrypt_key(
-            &cdm,
-            &stream_info.pssh,
-            "1753050648",
-            &apple_music_downloader,
-        )
-        .await
-        .unwrap();
+        let decryption_key = apple_music_downloader
+            .get_decryption_key(&stream_info, "1753050648")
+            .await
+            .unwrap();
 
         assert_eq!(decryption_key.len(), 32);
     }
