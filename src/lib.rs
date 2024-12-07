@@ -176,13 +176,6 @@ impl AppleMusicDownloader {
     }
 
     /// Gets the song information.
-    /// # Examples
-    /// ```rust
-    /// # use ramdl::AppleMusicDownloader;
-    /// # let media_user_token = std::env::var("MEDIA_USER_TOKEN").unwrap();
-    /// # let apple_music = AppleMusicDownloader::new_with_media_user_token(&media_user_token).await.unwrap();
-    /// let song = apple_music.get_songs("1753050648").await.unwrap();
-    /// ```
     pub async fn get_songs(&self, song_id: &str) -> Result<Song> {
         let store_front = self.store_front.clone();
         let res = self
@@ -199,13 +192,6 @@ impl AppleMusicDownloader {
     }
 
     /// Gets the lyrics information.
-    /// # Examples
-    /// ```rust
-    /// # use ramdl::AppleMusicDownloader;
-    /// # let media_user_token = std::env::var("MEDIA_USER_TOKEN").unwrap();
-    /// # let apple_music = AppleMusicDownloader::new_with_media_user_token(&media_user_token).await.unwrap();
-    /// let lyrics = apple_music.get_lyrics("1753050648").await.unwrap();
-    /// ```
     pub async fn get_lyrics(&self, song_id: &str) -> Result<Vec<Option<Lyrics>>> {
         let store_front = self.store_front.clone();
         let res = self
@@ -225,13 +211,6 @@ impl AppleMusicDownloader {
     }
 
     /// Searches for songs, albums, artists, and playlists.
-    /// # Examples
-    /// ```rust
-    /// # use ramdl::AppleMusicDownloader;
-    /// # let media_user_token = std::env::var("MEDIA_USER_TOKEN").unwrap();
-    /// # let apple_music = AppleMusicDownloader::new_with_media_user_token(&media_user_token).await.unwrap();
-    /// let search_results = apple_music.search("サイレンは彼方より").await.unwrap();
-    /// ```
     pub async fn search(&self, query: &str) -> Result<search::SearchResults> {
         let store_front = self.store_front.clone();
         let res = self
