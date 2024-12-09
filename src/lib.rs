@@ -60,38 +60,56 @@ impl AppleMusicDownloader {
     /// # Examples
     /// ```rust
     /// # use ramdl::AppleMusicDownloader;
-    /// let apple_music = AppleMusicDownloader::new("Asc+xxx", "us", "en-US");
+    /// let apple_music_downloader = AppleMusicDownloader::new("Asc+xxx", "us", "en-US", "eyJhxxx");
     /// ```
-    pub fn new(media_user_token: &str, store_front: &str, language: &str) -> Self {
-        Self {
+    pub fn new(media_user_token: &str, store_front: &str, language: &str, session: &str) -> Self {
+        if media_user_token.is_empty() {
+            panic!("Media user token is empty");
+        }
+        if store_front.is_empty() {
+            panic!("Store front is empty");
+        }
+        if language.is_empty() {
+            panic!("Language is empty");
+        }
+        if session.is_empty() {
+            panic!("Session is empty");
+        }
+        let mut apple_music_downloader = AppleMusicDownloader {
             media_user_token: media_user_token.to_string(),
             store_front: store_front.to_string(),
             language: language.to_string(),
             ..Default::default()
-        }
+        };
+        apple_music_downloader.init_headers().unwrap();
+        apple_music_downloader.headers.insert(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {session}").parse().unwrap(),
+        );
+        apple_music_downloader.create_client().unwrap();
+        apple_music_downloader
     }
 
     /// Creates a new `AppleMusicDownloader` instance with the provided media user token. This function will automatically get the store front and language from the Apple Music API.
     /// # Examples
     /// ```rust
     /// # use ramdl::AppleMusicDownloader;
-    /// let apple_music = AppleMusicDownloader::new_with_media_user_token("Asc+xxx");
+    /// let apple_music_downloader = AppleMusicDownloader::new_with_media_user_token("Asc+xxx");
     /// ```
     pub async fn new_with_media_user_token(media_user_token: &str) -> Result<Self> {
-        let mut apple_music = AppleMusicDownloader {
+        if media_user_token.is_empty() {
+            return Err(Error::Init("Media user token is empty".to_string()));
+        }
+        let mut apple_music_downloader = AppleMusicDownloader {
             media_user_token: media_user_token.to_string(),
             ..Default::default()
         };
-        apple_music.init().await?;
-        Ok(apple_music)
-    }
-
-    // Initializes the Apple Music downloader.
-    async fn init(&mut self) -> Result<()> {
-        self.init_session().await?;
-        self.init_headers().await?;
-        self.init_storefront_language().await?;
-        Ok(())
+        apple_music_downloader.init_session().await?;
+        apple_music_downloader.create_client()?;
+        apple_music_downloader.init_headers()?;
+        apple_music_downloader.create_client()?;
+        apple_music_downloader.init_storefront_language().await?;
+        Ok(apple_music_downloader)
     }
 
     // Initializes the Apple Music session.
@@ -124,14 +142,11 @@ impl AppleMusicDownloader {
             reqwest::header::AUTHORIZATION,
             format!("Bearer {token}").parse().unwrap(),
         );
-        self.client = reqwest::Client::builder()
-            .default_headers(self.headers.clone())
-            .build()?;
         Ok(())
     }
 
     // Initializes the request headers.
-    async fn init_headers(&mut self) -> Result<()> {
+    fn init_headers(&mut self) -> Result<()> {
         self.headers.insert(
             reqwest::header::USER_AGENT,
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0"
@@ -152,9 +167,6 @@ impl AppleMusicDownloader {
             reqwest::header::ORIGIN,
             APPLE_MUSIC_HOMEPAGE_URL.parse().unwrap(),
         );
-        self.client = reqwest::Client::builder()
-            .default_headers(self.headers.clone())
-            .build()?;
         Ok(())
     }
 
@@ -172,6 +184,14 @@ impl AppleMusicDownloader {
             .as_str()
             .unwrap()
             .to_string();
+        Ok(())
+    }
+
+    // Creates a reqwest client with the apple_music_downloader.headers.
+    fn create_client(&mut self) -> Result<()> {
+        self.client = reqwest::Client::builder()
+            .default_headers(self.headers.clone())
+            .build()?;
         Ok(())
     }
 
