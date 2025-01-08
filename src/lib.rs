@@ -10,6 +10,7 @@ use crate::error::Error;
 use crate::error::Result;
 use base64::Engine;
 use fancy_regex::Regex;
+use library_albums::LibraryAlbums;
 use serde_json::json;
 
 use lyrics::Lyrics;
@@ -305,20 +306,20 @@ impl AppleMusicDownloader {
         Ok(arists)
     }
 
-    pub async fn search_playlists(&self, query: &str) -> Result<Vec<search::Playlist>> {
+    pub async fn get_library(&self) -> Result<Vec<LibraryAlbums>> {
         let store_front = self.store_front.clone();
         let res = self
             .client
             .get(format!(
-                "{AMP_API_URL}/v1/catalog/{store_front}/search?term={query}&types=playlists&limit=25&offset=0",
+                "{AMP_API_URL}/v1/me/library/albums"
             ))
             .send()
             .await?
             .json::<serde_json::Value>()
             .await?;
-        let playlists: Vec<search::Playlist> =
-            serde_json::from_value(res["results"]["playlists"]["data"].clone())?;
-        Ok(playlists)
+        let albums: Vec<LibraryAlbums> =
+            serde_json::from_value(res["data"].clone())?;
+        Ok(albums)
     }
 
     /// Gets the Widevine license.
