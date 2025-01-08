@@ -258,6 +258,69 @@ impl AppleMusicDownloader {
         })
     }
 
+    pub async fn search_songs(&self, query: &str) -> Result<Vec<search::Song>> {
+        let store_front = self.store_front.clone();
+        let res = self
+            .client
+            .get(format!(
+                "{AMP_API_URL}/v1/catalog/{store_front}/search?term={query}&types=songs&limit=25&offset=0",
+            ))
+            .send()
+            .await?
+            .json::<serde_json::Value>()
+            .await?;
+        let songs: Vec<search::Song> =
+            serde_json::from_value(res["results"]["songs"]["data"].clone())?;
+        Ok(songs)
+    }
+    pub async fn search_ablums(&self, query: &str) -> Result<Vec<search::Album>> {
+        let store_front = self.store_front.clone();
+        let res = self
+            .client
+            .get(format!(
+                "{AMP_API_URL}/v1/catalog/{store_front}/search?term={query}&types=albums&limit=25&offset=0",
+            ))
+            .send()
+            .await?
+            .json::<serde_json::Value>()
+            .await?;
+        let albums: Vec<search::Album> =
+            serde_json::from_value(res["results"]["albums"]["data"].clone())?;
+        Ok(albums)
+    }
+
+    pub async fn search_artists(&self, query: &str) -> Result<Vec<search::Artist>> {
+        let store_front = self.store_front.clone();
+        let res = self
+            .client
+            .get(format!(
+                "{AMP_API_URL}/v1/catalog/{store_front}/search?term={query}&types=artists&limit=25&offset=0",
+            ))
+            .send()
+            .await?
+            .json::<serde_json::Value>()
+            .await?;
+        let arists: Vec<search::Artist> =
+            serde_json::from_value(res["results"]["artists"]["data"].clone())?;
+        Ok(arists)
+    }
+
+    pub async fn search_playlists(&self, query: &str) -> Result<Vec<search::Playlist>> {
+        let store_front = self.store_front.clone();
+        let res = self
+            .client
+            .get(format!(
+                "{AMP_API_URL}/v1/catalog/{store_front}/search?term={query}&types=playlists&limit=25&offset=0",
+            ))
+            .send()
+            .await?
+            .json::<serde_json::Value>()
+            .await?;
+        let playlists: Vec<search::Playlist> =
+            serde_json::from_value(res["results"]["playlists"]["data"].clone())?;
+        Ok(playlists)
+    }
+
     /// Gets the Widevine license.
     pub async fn get_widevine_license(
         &self,
