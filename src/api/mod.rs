@@ -14,6 +14,12 @@ pub mod editorial_notes;
 pub mod genres;
 /// A resource object that represents a library album.
 pub mod library_albums;
+/// A resource object that represents a library artist.
+pub mod library_artists;
+/// A resource object that represents a library song.
+pub mod library_songs;
+/// A resource object that represents a library music video.
+pub mod library_music_video;
 /// /v1/catalog/:store_front/songs/:song_id?include=lyrics,syllable-lyrics
 pub mod lyrics;
 /// /v1/catalog/:store_front/music-videos/:id

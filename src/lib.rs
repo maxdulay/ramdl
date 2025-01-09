@@ -307,19 +307,26 @@ impl AppleMusicDownloader {
     }
 
     pub async fn get_library(&self) -> Result<Vec<LibraryAlbums>> {
-        let store_front = self.store_front.clone();
         let res = self
             .client
-            .get(format!(
-                "{AMP_API_URL}/v1/me/library/albums"
-            ))
+            .get(format!("{AMP_API_URL}/v1/me/library/albums"))
             .send()
             .await?
             .json::<serde_json::Value>()
             .await?;
-        let albums: Vec<LibraryAlbums> =
-            serde_json::from_value(res["data"].clone())?;
+        let albums: Vec<LibraryAlbums> = serde_json::from_value(res["data"].clone())?;
         Ok(albums)
+    }
+    pub async fn get_library_album(&self, id: String) -> Result<LibraryAlbums> {
+        let res = self
+            .client
+            .get(format!("{AMP_API_URL}/v1/me/library/albums/{id}"))
+            .send()
+            .await?
+            .json::<serde_json::Value>()
+            .await?;
+        let album: LibraryAlbums = serde_json::from_value(res["data"][0].clone())?;
+        Ok(album)
     }
 
     /// Gets the Widevine license.

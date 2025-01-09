@@ -1,6 +1,9 @@
 use super::albums::Albums;
 use super::artwork::Artwork;
 use super::play_parameters::PlayParameters;
+use super::library_artists::LibraryArtists;
+use super::library_songs::LibrarySongs;
+use super::library_music_video::LibraryMusicVideos;
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct LibraryAlbums {
@@ -46,27 +49,27 @@ pub struct Attributes {
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Relationships {
-    // /// The library artists associated with the album. By default, artists not included.
-    // /// Fetch limits: 10 default, 10 maximum
-    // pub artists: Option<LibraryAlbumsArtistsRelationship>,
-    // /// The album in the Apple Music catalog the library album is associated with, when known.
-    // /// Fetch limits: None (associated with at most one catalog album)
-    // pub catalog: Option<LibraryAlbumsCatalogRelationship>,
-    // /// The library songs and library music videos on the album. Only available when fetching single library album resource by ID. By default, tracks includes objects.
-    // /// Fetch limits: 300 default, 300 maximum.
-    // pub tracks: Option<LibraryAlbumsTracksRelationship>,
+     /// The library artists associated with the album. By default, artists not included.
+     /// Fetch limits: 10 default, 10 maximum
+     pub artists: Option<LibraryAlbumsArtistsRelationship>,
+     /// The album in the Apple Music catalog the library album is associated with, when known.
+     /// Fetch limits: None (associated with at most one catalog album)
+     pub catalog: Option<LibraryAlbumsCatalogRelationship>,
+     /// The library songs and library music videos on the album. Only available when fetching single library album resource by ID. By default, tracks includes objects.
+     /// Fetch limits: 300 default, 300 maximum.
+     pub tracks: Option<LibraryAlbumsTracksRelationship>,
 }
 
-// #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-// #[serde(rename_all = "camelCase")]
-// pub struct LibraryAlbumsArtistsRelationship {
-//     /// The relative location to fetch the relationship directly.
-//     pub href: String,
-//     /// The relative location to request the next page of resources in the collection, if additional resources are available for fetching.
-//     pub next: Option<String>,
-//     /// The library artists for the library album.
-//     pub data: Vec<LibraryArtists>,
-// }
+ #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+ #[serde(rename_all = "camelCase")]
+ pub struct LibraryAlbumsArtistsRelationship {
+     /// The relative location to fetch the relationship directly.
+     pub href: String,
+     /// The relative location to request the next page of resources in the collection, if additional resources are available for fetching.
+     pub next: Option<String>,
+     /// The library artists for the library album.
+     pub data: Vec<LibraryArtists>,
+ }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -79,21 +82,29 @@ pub struct LibraryAlbumsCatalogRelationship {
     pub data: Vec<Albums>,
 }
 
-// #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-// #[serde(rename_all = "camelCase")]
-// pub struct LibraryAlbumsTracksRelationship {
-//     /// The relative location to fetch the relationship directly.
-//     pub href: String,
-//     /// The relative location to request the next page of resources in the collection, if additional resources are available for fetching.
-//     pub next: Option<String>,
-//     /// The songs and music videos from the library album’s tracklist added to the user’s library.
-//     pub data: Vec<LibraryTracks>,
-// }
+ #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+ #[serde(rename_all = "camelCase")]
+ pub struct LibraryAlbumsTracksRelationship {
+     /// The relative location to fetch the relationship directly.
+     pub href: String,
+     /// The relative location to request the next page of resources in the collection, if additional resources are available for fetching.
+     pub next: Option<String>,
+     /// The songs and music videos from the library album’s tracklist added to the user’s library.
+     pub data: Vec<LibraryTracks>,
+     pub meta: Meta
+ }
 
-// #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-// #[serde(rename_all = "camelCase")]
-// #[serde(tag = "type")]
-// pub enum LibraryTracks {
-//     LibraryMusicVideos(LibraryMusicVideos),
-//     LibrarySongs(LibrarySongs),
-// }
+
+ #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Meta {
+    pub total: i64,
+}
+
+ #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+ #[serde(rename_all = "kebab-case")]
+ #[serde(tag = "type")]
+ pub enum LibraryTracks {
+     LibraryMusicVideos(LibraryMusicVideos),
+     LibrarySongs(LibrarySongs),
+ }
